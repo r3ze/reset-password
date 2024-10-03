@@ -87,7 +87,7 @@
     const urlParams = new URLSearchParams(window.location.search);
     const userId = urlParams.get('userId');
     const secret = urlParams.get('secret');
-    
+
     const form = document.getElementById('passwordResetForm');
     const messageDiv = document.getElementById('message');
 
@@ -95,19 +95,39 @@
       e.preventDefault();
       const password = document.getElementById('password').value;
       const confirmPassword = document.getElementById('confirmPassword').value;
+      const resetButton = form.querySelector('button');
       
       messageDiv.innerHTML = '';
+      resetButton.disabled = true;
+
+      if (!userId || !secret) {
+        messageDiv.innerHTML = '<p class="error">Invalid password reset link. Please try again.</p>';
+        resetButton.disabled = false;
+        return;
+      }
 
       if (password !== confirmPassword) {
         messageDiv.innerHTML = '<p class="error">Passwords do not match.</p>';
+        resetButton.disabled = false;
+        return;
+      }
+
+      if (password.length < 8) {
+        messageDiv.innerHTML = '<p class="error">Password must be at least 8 characters long.</p>';
+        resetButton.disabled = false;
         return;
       }
 
       try {
         await account.updateRecovery(userId, secret, password, confirmPassword);
-        messageDiv.innerHTML = '<p class="success">Password reset successful!</p>';
+        messageDiv.innerHTML = '<p class="success">Password reset successful! Redirecting to login page...</p>';
+        setTimeout(() => {
+          window.location.href = '/login';  // Replace with your login page
+        }, 3000);
       } catch (error) {
         messageDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+      } finally {
+        resetButton.disabled = false;
       }
     });
   </script>
