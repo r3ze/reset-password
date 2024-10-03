@@ -120,10 +120,8 @@
 
       try {
         await account.updateRecovery(userId, secret, password, confirmPassword);
-        messageDiv.innerHTML = '<p class="success">Password reset successful! Redirecting to login page...</p>';
-        setTimeout(() => {
-          window.location.href = '/login';  // Replace with your login page
-        }, 3000);
+        messageDiv.innerHTML = '<p class="success">Password reset successful!</p>';
+
       } catch (error) {
         messageDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
       } finally {
